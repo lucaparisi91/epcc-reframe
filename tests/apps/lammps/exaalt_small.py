@@ -1,5 +1,6 @@
 """ReFrame script for lammps dipole test"""
 
+import os
 import reframe as rfm
 
 from lammps_base import LAMMPSBase
@@ -18,16 +19,18 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     build_system = "CMake"
     modules = ["cpe", "cray-fftw", "cmake", "eigen"]
     sourcesdir = "https://github.com/lammps/lammps.git"
-    builddir = "lammps"
     local = True
 
     @run_before("compile")
     def prepare_build(self):
         """Prepare build"""
+        builddir = f"{self.stagedir}/lammps_build"
+        configuredir= f"{self.stagedir}/cmake"
         #  export LD_LIBRARY_PATH=$CRAY_LD_LIBRARY_PATH:$LD_LIBRARY_PATH
-        self.env_vars["LD_LIBRARY_PATH"] = self.env_vars["CRAY_LD_LIBRARY_PATH"] + self.env_vars["LD_LIBRARY_PATH"]
-        self.build_system.clags = [
-            "-C ../cmake/presets/most.cmake",
+        #self.env_vars["LD_LIBRARY_PATH"] = self.env_vars["CRAY_LD_LIBRARY_PATH"] + self.env_vars["LD_LIBRARY_PATH"]
+        self.env_vars["LD_LIBRARY_PATH"] = os.getenv("CRAY_LD_LIBRARY_PATH") + ":" + os.getenv("LD_LIBRARY_PATH")
+        self.build_system.config_opts = [
+            f"-C {self.stagedir}/cmake/presets/most.cmake",
             "-D BUILD_MPI=on",
             "-D BUILD_SHARED_LIBS=yes",
             "-D CMAKE_CXX_COMPILER=CC",
@@ -38,6 +41,7 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
             "-D FFTW3_INCLUDE_DIR=${FFTW_INC}",
             "-D FFTW3_LIBRARY=${FFTW_DIR}/libfftw3_mpi.so",
             "-D LAMMPS_SIZES=bigbig",
+            f"{self.stagedir}/cmake",
         ]
 
 

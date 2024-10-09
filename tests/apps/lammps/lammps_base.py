@@ -7,7 +7,7 @@ import reframe.utility.sanity as sn
 class LAMMPSBase(rfm.RunOnlyRegressionTest):
     """ReFrame base class for LAMMPS tests"""
 
-    valid_prog_environs = ["PrgEnv-gnu", "intel", "nvidia-mpi", "rocm-PrgEnv-cray"]
+    valid_prog_environs = ["PrgEnv-cray", "intel", "nvidia-mpi", "rocm-PrgEnv-cray"]
     executable = "lmp"
     extra_resources = {"qos": {"qos": "standard"}}
 
