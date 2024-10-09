@@ -4,6 +4,13 @@ import reframe as rfm
 
 from lammps_base import LAMMPSBase
 
+#  class DownloadLAMMPS(rfm.RunOnlyRegressionTest):
+#      """Download LAMMPS"""
+#      descr = "Download LAMMPS tarball"""
+#      local = True
+#      valid_prog_environs = ["PrgEnv-cray"]
+#      executable =
+
 
 class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     """Compile LAMMPS"""
@@ -12,6 +19,7 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     modules = ["cpe", "cray-fftw", "cmake", "eigen"]
     sourcesdir = "https://github.com/lammps/lammps.git"
     builddir = "lammps"
+    local = True
 
     @run_before("compile")
     def prepare_build(self):
@@ -52,7 +60,7 @@ class ExaaltLammpsSmall(LAMMPSBase):
 
     n_nodes = 16
     num_cpus_per_task = 1
-    time_limit = "15m"
+    time_limit = "30m"
     env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
 
     cores = variable(
