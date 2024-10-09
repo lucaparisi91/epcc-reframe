@@ -5,12 +5,41 @@ import reframe as rfm
 from lammps_base import LAMMPSBase
 
 
+class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
+    """Compile LAMMPS"""
+
+    build_system = "CMake"
+    modules = ["cpe", "cray-fftw", "cmake", "eigen"]
+    sourcesdir = "https://github.com/lammps/lammps.git"
+    builddir = "lammps"
+
+    @run_before("compile")
+    def prepare_build(self):
+        """Prepare build"""
+        #  export LD_LIBRARY_PATH=$CRAY_LD_LIBRARY_PATH:$LD_LIBRARY_PATH
+        self.env_vars["LD_LIBRARY_PATH"] = self.env_vars["CRAY_LD_LIBRARY_PATH"] + self.env_vars["LD_LIBRARY_PATH"]
+        self.build_system.clags = [
+            "-C ../cmake/presets/most.cmake",
+            "-D BUILD_MPI=on",
+            "-D BUILD_SHARED_LIBS=yes",
+            "-D CMAKE_CXX_COMPILER=CC",
+            '-D CMAKE_CXX_FLAGS="-O2" ',
+            "-D CMAKE_INSTALL_PREFIX=/work/y07/shared/apps/core/lammps/13Feb2024",
+            "-D EIGEN3_INCLUDE_DIR=/work/y07/shared/libs/core/eigen/3.4.0/include",
+            "-D FFT=FFTW3",
+            "-D FFTW3_INCLUDE_DIR=${FFTW_INC}",
+            "-D FFTW3_LIBRARY=${FFTW_DIR}/libfftw3_mpi.so",
+            "-D LAMMPS_SIZES=bigbig",
+        ]
+
+
 @rfm.simple_test
 class ExaaltLammpsSmall(LAMMPSBase):
     """ReFrame LAMMPS small test based on NERSC-10 Exaalt benchmark"""
 
     valid_systems = ["archer2:compute"]
-    modules = ["lammps"]
+    #  modules = ["lammps"]
+    stream_binary = fixture(BuildLAMMPS, scope="environment")
     descr = "Small performance test using NERSC-10 Exaalt LAMMPS benchmark reference run"
     executable_opts = [
         "-in in.snap.test",
