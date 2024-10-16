@@ -29,7 +29,6 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     def prepare_build(self):
         """Prepare build"""
         self.build_system.builddir = f"{self.stagedir}/lammps_build"
-        self.build_system.configuredir = f"{self.stagedir}/cmake"
         #  Equivalent to:
         #  export LD_LIBRARY_PATH=$CRAY_LD_LIBRARY_PATH:$LD_LIBRARY_PATH
         self.env_vars["LD_LIBRARY_PATH"] = os.getenv("CRAY_LD_LIBRARY_PATH") + ":" + os.getenv("LD_LIBRARY_PATH")
@@ -39,7 +38,7 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
             "-D BUILD_SHARED_LIBS=yes",
             "-D CMAKE_CXX_COMPILER=CC",
             '-D CMAKE_CXX_FLAGS="-O2" ',
-            "-D CMAKE_INSTALL_PREFIX=/work/y07/shared/apps/core/lammps/13Feb2024",
+            f"-D CMAKE_INSTALL_PREFIX={self.stagedir}/install",
             "-D EIGEN3_INCLUDE_DIR=/work/y07/shared/libs/core/eigen/3.4.0/include",
             "-D FFT=FFTW3",
             "-D FFTW3_INCLUDE_DIR=${FFTW_INC}",
