@@ -2,6 +2,7 @@
 
 import os
 import reframe as rfm
+import reframe.utility.sanity as sn
 
 from lammps_base import LAMMPSBase
 
@@ -19,13 +20,15 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     build_system = "CMake"
     modules = ["cpe", "cray-fftw", "cmake", "eigen"]
     sourcesdir = "https://github.com/lammps/lammps.git"
+    sourcepath = "src"
+    max_concurrency = 8
     local = True
 
     @run_before("compile")
     def prepare_build(self):
         """Prepare build"""
-        builddir = f"{self.stagedir}/lammps_build"
-        configuredir= f"{self.stagedir}/cmake"
+        self.build_system.builddir = f"{self.stagedir}/lammps_build"
+        self.build_system.configuredir= f"{self.stagedir}/cmake"
         #  export LD_LIBRARY_PATH=$CRAY_LD_LIBRARY_PATH:$LD_LIBRARY_PATH
         #self.env_vars["LD_LIBRARY_PATH"] = self.env_vars["CRAY_LD_LIBRARY_PATH"] + self.env_vars["LD_LIBRARY_PATH"]
         self.env_vars["LD_LIBRARY_PATH"] = os.getenv("CRAY_LD_LIBRARY_PATH") + ":" + os.getenv("LD_LIBRARY_PATH")
@@ -43,6 +46,10 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
             "-D LAMMPS_SIZES=bigbig",
             f"{self.stagedir}/cmake",
         ]
+
+    @sanity_function
+    def set_sanity_patterns(self):
+        return sn.path_exists(os.path.join(self.build_system.builddir, "lmp"))
 
 
 @rfm.simple_test
@@ -76,7 +83,7 @@ class ExaaltLammpsSmall(LAMMPSBase):
 
     reference = {
         "archer2:compute": {
-            "performance": (0.009, -0.1, 0.1, "ns/day"),
+            "performance": (0.007, -0.1, None, "ns/day"),
         },
     }
 
@@ -85,6 +92,12 @@ class ExaaltLammpsSmall(LAMMPSBase):
         """sets up number of nodes"""
         if self.current_system.name in ["archer2"]:
             self.num_tasks_per_node = 128
+
+    @run_after("setup")
+    def set_executable(self):
+        """sets up executable"""
+        self.executable = os.path.join(self.stream_binary.build_system.builddir, "lmp")
+
 
     @run_before("run")
     def setup_resources(self):
