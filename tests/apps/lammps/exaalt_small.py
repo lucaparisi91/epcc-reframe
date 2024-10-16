@@ -1,6 +1,7 @@
 """ReFrame script for lammps dipole test"""
 
 import os
+
 import reframe as rfm
 import reframe.utility.sanity as sn
 
@@ -28,9 +29,9 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     def prepare_build(self):
         """Prepare build"""
         self.build_system.builddir = f"{self.stagedir}/lammps_build"
-        self.build_system.configuredir= f"{self.stagedir}/cmake"
+        self.build_system.configuredir = f"{self.stagedir}/cmake"
+        #  Equivalent to:
         #  export LD_LIBRARY_PATH=$CRAY_LD_LIBRARY_PATH:$LD_LIBRARY_PATH
-        #self.env_vars["LD_LIBRARY_PATH"] = self.env_vars["CRAY_LD_LIBRARY_PATH"] + self.env_vars["LD_LIBRARY_PATH"]
         self.env_vars["LD_LIBRARY_PATH"] = os.getenv("CRAY_LD_LIBRARY_PATH") + ":" + os.getenv("LD_LIBRARY_PATH")
         self.build_system.config_opts = [
             f"-C {self.stagedir}/cmake/presets/most.cmake",
@@ -48,8 +49,10 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
         ]
 
     @sanity_function
-    def set_sanity_patterns(self):
-        return sn.path_exists(os.path.join(self.build_system.builddir, "lmp"))
+    def sanity_executable_exists(self):
+        """Check that the executable was created"""
+        build_dir = self.build_system.builddir
+        return sn.path_exists(os.path.join(build_dir, "lmp"))
 
 
 @rfm.simple_test
@@ -97,7 +100,6 @@ class ExaaltLammpsSmall(LAMMPSBase):
     def set_executable(self):
         """sets up executable"""
         self.executable = os.path.join(self.stream_binary.build_system.builddir, "lmp")
-
 
     @run_before("run")
     def setup_resources(self):
