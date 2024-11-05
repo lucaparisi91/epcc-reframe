@@ -3,9 +3,10 @@
 BUILD_DIR=build
 INSTALL_ROOT=${1}
 
-
 mkdir -p ${BUILD_DIR}
 cd ${BUILD_DIR}
+
+mkdir -p ${INSTALL_ROOT}
 
 CC=cc
 CXX=CC
