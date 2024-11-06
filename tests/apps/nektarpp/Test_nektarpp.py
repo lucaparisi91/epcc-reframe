@@ -40,19 +40,15 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     build_system = 'Make'
     fetch_nektarpp = fixture(FetchNektarplusplus, scope="environment")
 
-    valid_systems = ["archer2:compute"]
+    valid_systems = ["archer2:login"]
     valid_prog_environs = ["PrgEnv-cray"]
 
     tags = {"compile"}
 
-    #@run_after('init')
-    #def add_dependencies(self):
-    #    self.depends_on('FetchNektarplusplus', udeps.fully)
 
     #@require_deps
     @run_before('compile')
     def prepare_build(self):
-        #        target = fetch_Nektarplusplus(part='login', environ='PrgEnv-cray')
         NEKTAR_VERSION="5.5.0"
         NEKTAR_LABEL="nektar"
         NEKTAR_ARCHIVE=f"{NEKTAR_LABEL}-v{NEKTAR_VERSION}.tar.gz"
@@ -74,7 +70,9 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
 
     @sanity_function
     def validate_compile(self):
-        return sn.assert_eq(0, 0)
+        # If compilation fails, the test would fail in any case, so nothing to
+        # further validate here.
+        return True
 
 
 
@@ -90,28 +88,31 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
     
     compile_nektarpp = fixture(CompileNektarplusplus, scope="environment")
 
-    #    @run_after('init')
-    #    def add_dependencies(self):
-    #        self.depends_on('Compile_Nektarplusplus', udeps.fully)
+    num_nodes = 1
+    num_tasks_per_node = 32
+    num_cpus_per_task = 1
+    num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
+    
+    time_limit = "20m"
+
+    executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
+
+    reference = {"archer2:compute": {"Computationtime": (953, -5, 5, "seconds")}}
 
 
     @run_before('run')
     def prepare_run(self):
-        
-        #target = Compile_Nektarplusplus(part='compute', environ='PrgEnv-cray')
 
-        num_nodes = 1
-        num_tasks_per_node = 32
-        num_cpus_per_task = 1
-        num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
+        #num_nodes = 1
+        #num_tasks_per_node = 32
+        #num_cpus_per_task = 1
+        #num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
         
-        time_limit = "2h"
+        #time_limit = "2h"
 
         modules = ["cpe/22.12"]
 
         env_vars = {"CRAY_ADD_RPATH": "yes"}
-
-        print("james test")
 
         self.executable = os.path.join(
             self.compile_nektarpp.stagedir,
@@ -119,25 +120,22 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
             'build', 'nektar', 'bin/IncNavierStokesSolver'
         )
 
-        print("James executable: ", self.executable)
-
-        #executable = f"{NEKTAR_LABEL}/{NEKTAR_NAME}/bin/IncNavierStokesSolver"
-        self.executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
+        #self.executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
     
-        reference = {"archer2:compute": {"steptime": (6.3, -0.2, 0.2, "seconds")}}
+        #reference = {"archer2:compute": {"Computationtime": (953, -5, 5, "seconds")}}
 
     @sanity_function
     def assert_finished(self):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found("", self.stdout)
 
-    @performance_function("seconds", perf_key="performance")
+    @performance_function("seconds", perf_key="Computationtime")
     def extract_perf(self):
         """Extract performance value to compare with reference value"""
-        return 0 
-            #sn.extractsingle(
-            #r"Averaged time per step \(s\):\s+(?P<steptime>\S+)",
-            #self.stdout,
-            #"steptime",
-            #float,
-            #)
+        print("stdout: ", self.stdout)
+        sn.extractsingle(
+        r"Total\s+Computation\s+Time\s+=\s+(?P<Computationtime>[0-9]+.[0-9]+)s",
+        self.stdout,
+        1,
+        float,
+        )
