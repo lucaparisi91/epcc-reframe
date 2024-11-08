@@ -1,6 +1,7 @@
 """ReFrame script for LAMMPS ethanol test"""
 
 import reframe as rfm
+import reframe.utility.sanity as sn
 
 from lammps_base import LAMMPSBase
 
@@ -35,6 +36,17 @@ class LAMMPSBaseEthanol(LAMMPSBase):
         "archer2:compute": {"energy": (ethanol_energy_reference, -0.01, 0.01, "kJ/mol")},
         "archer2-tds:compute": {"energy": (ethanol_energy_reference, -0.01, 0.01, "kJ/mol")},
     }
+
+    @performance_function("kJ/mol", perf_key="energy")
+    def extract_energy(self):
+        """Extract value of system energy for performance check"""
+        return sn.extractsingle(
+            r"\s+11000\s+\S+\s+\S+\s+(?P<energy>\S+)",
+            self.keep_files[0],
+            "energy",
+            float,
+            item=-1,
+        )
 
 
 @rfm.simple_test
