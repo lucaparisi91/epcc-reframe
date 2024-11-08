@@ -50,7 +50,7 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     @sanity_function
     def sanity_executable_exists(self):
         """Check that the executable was created"""
-        build_dir = self.build_system.builddir
+        build_dir = f"{self.stagedir}/lammps_build"
         return sn.path_exists(os.path.join(build_dir, "lmp"))
 
 
