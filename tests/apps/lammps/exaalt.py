@@ -8,7 +8,6 @@ import reframe.utility.sanity as sn
 from lammps_base import BuildLAMMPS, LAMMPSBase
 
 
-@rfm.simple_test
 class LAMMPSBaseExaalt(LAMMPSBase):
     """ReFrame LAMMPS Base class for Exaalt tests"""
 
