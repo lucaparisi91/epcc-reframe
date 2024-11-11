@@ -50,7 +50,7 @@ class LAMMPSBaseExaalt(LAMMPSBase):
     def extract_energy(self):
         """Extract value of system energy for performance check"""
         return sn.extractsingle(
-            r"\s+100\s+\S+\s+\S+\s+\S+\s+(?P<energy>\S+)",
+            r"^\s+100\s+\S+\s+\S+\s+\S+\s+(?P<energy>\S+)\s+\S+$",
             self.keep_files[0],
             "energy",
             float,
