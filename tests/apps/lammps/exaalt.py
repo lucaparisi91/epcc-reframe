@@ -23,6 +23,13 @@ class LAMMPSBaseExaalt(LAMMPSBase):
         },
     )
 
+    reference = {
+        "archer2:compute": {
+            "energy": (-8.7467248, -0.001, 0.001, "kJ/mol"),
+            "performance": (0.007, -0.1, None, "ns/day"),
+        },
+    }
+
     @run_after("init")
     def setup_nnodes(self):
         """sets up number of nodes"""
@@ -43,7 +50,7 @@ class LAMMPSBaseExaalt(LAMMPSBase):
     def extract_energy(self):
         """Extract value of system energy for performance check"""
         return sn.extractsingle(
-            r"\s+11000\s+\S+\s+\S+\s+\S+\s+(?P<energy>\S+)",
+            r"\s+100\s+\S+\s+\S+\s+\S+\s+(?P<energy>\S+)",
             self.keep_files[0],
             "energy",
             float,
@@ -69,13 +76,6 @@ class LAMMPSExaaltSmall(LAMMPSBaseExaalt):
     n_nodes = 16
     time_limit = "30m"
 
-    reference = {
-        "archer2:compute": {
-            "energy": (-8.7467248, -0.001, 0.001, "kJ/mol"),
-            "performance": (0.007, -0.1, None, "ns/day"),
-        },
-    }
-
 
 @rfm.simple_test
 class LAMMPSExaaltRef(LAMMPSBaseExaalt):
@@ -95,10 +95,3 @@ class LAMMPSExaaltRef(LAMMPSBaseExaalt):
 
     n_nodes = 1024
     time_limit = "30m"
-
-    reference = {
-        "archer2:compute": {
-            "energy": (-8.7467248, -0.001, 0.001, "kJ/mol"),
-            "performance": (0.004, -0.1, 0.1, "ns/day"),
-        },
-    }
