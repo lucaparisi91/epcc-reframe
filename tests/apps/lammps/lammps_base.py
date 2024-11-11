@@ -13,13 +13,13 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     modules = ["cpe", "cray-fftw", "cmake", "eigen"]
     sourcesdir = "https://github.com/lammps/lammps.git"
     sourcepath = "src"
-    max_concurrency = 8
     local = True
     build_locally = False
 
     @run_before("compile")
     def prepare_build(self):
         """Prepare build"""
+        self.build_system.max_concurrency = 8
         self.build_system.builddir = f"{self.stagedir}/lammps_build"
         #  Equivalent to:
         #  export LD_LIBRARY_PATH=$CRAY_LD_LIBRARY_PATH:$LD_LIBRARY_PATH
