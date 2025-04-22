@@ -89,15 +89,17 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
     compile_nektarpp = fixture(CompileNektarplusplus, scope="environment")
 
     num_nodes = 1
-    num_tasks_per_node = 32
+    num_tasks_per_node = 1
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
     
     time_limit = "20m"
+    
+    keep_files = ["rfm_job.out"]
 
     executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
 
-    reference = {"archer2:compute": {"Computationtime": (953, -5, 5, "seconds")}}
+    reference = {"archer2:compute": {"Computationtime": (953, -0.1, 0.1, "seconds")}}
 
 
     @run_before('run')
@@ -122,7 +124,6 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
 
         #self.executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
     
-        #reference = {"archer2:compute": {"Computationtime": (953, -5, 5, "seconds")}}
 
     @sanity_function
     def assert_finished(self):
@@ -132,10 +133,9 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
     @performance_function("seconds", perf_key="Computationtime")
     def extract_perf(self):
         """Extract performance value to compare with reference value"""
-        print("stdout: ", self.stdout)
-        sn.extractsingle(
-        r"Total\s+Computation\s+Time\s+=\s+(?P<Computationtime>[0-9]+.[0-9]+)s",
-        self.stdout,
-        1,
+        return sn.extractsingle(
+        r"Total\s+Computation\s+Time\s+=\s+(?P<Comptime>[0-9]+.[0-9]+)s",
+        self.keep_files[0],
+        "Comptime",
         float,
         )
