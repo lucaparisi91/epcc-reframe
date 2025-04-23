@@ -7,21 +7,21 @@
 #   ReFrame Project Developers. See the top-level LICENSE file for details.
 #   SPDX-License-Identifier: BSD-3-Clause
 
-import os
 import reframe as rfm
 import reframe.utility.sanity as sn
-import reframe.utility.udeps as udeps
+from reframe.utility import udeps
 
 
 class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
+    """Test access to nektarplusplus source code"""
     descr = "Fetch Nektarplusplus"
-    NEKTAR_VERSION = "5.5.0"
-    NEKTAR_LABEL = "nektar"
-    NEKTAR_ARCHIVE = f"{NEKTAR_LABEL}-v{NEKTAR_VERSION}.tar.gz"
-    NEKTAR_NAME = f"{NEKTAR_LABEL}-{NEKTAR_VERSION}"
-    version = variable(str, value=NEKTAR_VERSION)
+    nektar_version = "5.5.0"
+    nektar_label = "nektar"
+    nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
+    nektar_name = f"{nektar_label}-{nektar_version}"
+    version = variable(str, value=nektar_version)
     executable = "wget"
-    executable_opts = [f"https://gitlab.nektar.info/nektar/nektar/-/archive/v{NEKTAR_VERSION}/{NEKTAR_ARCHIVE}"]
+    executable_opts = [f"https://gitlab.nektar.info/nektar/nektar/-/archive/v{nektar_version}/{nektar_archive}"]
     local = True
     valid_systems = ["archer2:login"]
     valid_prog_environs = ["PrgEnv-cray"]
@@ -30,10 +30,12 @@ class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
 
     @sanity_function
     def validate_download(self):
+        """Validate download of source code sucessful"""
         return sn.assert_eq(self.job.exitcode, 0)
 
 
 class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
+    """Test compilation of nektarplusplus"""
     descr = "Build Nektarplusplus"
     build_system = "Make"
     fetch_nektarpp = fixture(FetchNektarplusplus, scope="environment")
@@ -45,12 +47,13 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
 
     @run_before("compile")
     def prepare_build(self):
-        NEKTAR_VERSION = "5.5.0"
-        NEKTAR_LABEL = "nektar"
-        NEKTAR_ARCHIVE = f"{NEKTAR_LABEL}-v{NEKTAR_VERSION}.tar.gz"
-        NEKTAR_NAME = f"{NEKTAR_LABEL}-v{NEKTAR_VERSION}"
-        tarball = f"{NEKTAR_ARCHIVE}"
-        self.build_prefix = f"{NEKTAR_NAME}"
+        """Prepare environment for build"""
+        nektar_version = "5.5.0"
+        nektar_label = "nektar"
+        nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
+        nektar_name = f"{nektar_label}-v{nektar_version}"
+        tarball = f"{nektar_name}"
+        self.build_prefix = f"{nektar_name}"
 
         fullpath = os.path.join(self.fetch_nektarpp.stagedir, tarball)
         env_vars = {"CRAY_ADD_RPATH": "yes"}
@@ -59,15 +62,14 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
             f"cp {fullpath} {self.stagedir}",
             f"tar xzf {tarball}",
             f"cd {self.build_prefix}",
-            f"source ../cmake_nektarpp.sh {NEKTAR_LABEL}",
+            f"source ../cmake_nektarpp.sh {nektar_label}",
         ]
         self.build_system.max_concurrency = 8
         self.build_system.options = ["install"]
 
     @sanity_function
     def validate_compile(self):
-        # If compilation fails, the test would fail in any case, so nothing to
-        # further validate here.
+        """Validate compilation by checking existance of binary"""
         return sn.path_isfile("nektar-v5.5.0/build/nektar/bin/IncNavierStokesSolver")
 
 

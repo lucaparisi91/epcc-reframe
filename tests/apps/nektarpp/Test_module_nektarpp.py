@@ -7,7 +7,6 @@
 #   ReFrame Project Developers. See the top-level LICENSE file for details.
 #   SPDX-License-Identifier: BSD-3-Clause
 
-import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 
@@ -33,7 +32,7 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
 
     @run_before("run")
     def prepare_run(self):
-
+        """Setup test execution"""
         self.num_nodes = 1
         self.num_tasks_per_node = 1
         self.num_cpus_per_task = 1
