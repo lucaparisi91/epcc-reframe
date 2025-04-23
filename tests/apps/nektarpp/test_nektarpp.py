@@ -49,7 +49,7 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
 
     env_vars = {"CRAY_ADD_RPATH": "yes"}
 
-    build_prefix=""
+    build_prefix = ""
 
     @run_before("compile")
     def prepare_build(self):
