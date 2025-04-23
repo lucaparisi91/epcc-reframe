@@ -57,7 +57,8 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
         nektar_version = "5.5.0"
         nektar_label = "nektar"
         nektar_name = f"{nektar_label}-v{nektar_version}"
-        tarball = f"{nektar_name}"
+        nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
+        tarball = f"{nektar_archive}"
         self.build_prefix = f"{nektar_name}"
 
         fullpath = os.path.join(self.fetch_nektarpp.stagedir, tarball)
