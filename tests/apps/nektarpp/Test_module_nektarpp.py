@@ -11,11 +11,13 @@ import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 
+
 @rfm.simple_test
 class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
     """Nektarplusplus Test"""
-    descr = 'Test Nektarplusplus'
-    
+
+    descr = "Test Nektarplusplus"
+
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-cray"]
 
@@ -23,16 +25,20 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
 
     keep_files = ["rfm_job.out"]
 
-    reference = {"archer2:compute": {"Computationtime": (953.0, -0.1, 0.1, "seconds"),},}
+    reference = {
+        "archer2:compute": {
+            "Computationtime": (953.0, -0.1, 0.1, "seconds"),
+        },
+    }
 
-    @run_before('run')
+    @run_before("run")
     def prepare_run(self):
 
         self.num_nodes = 1
         self.num_tasks_per_node = 1
         self.num_cpus_per_task = 1
         self.num_tasks = self.num_nodes * self.num_tasks_per_node * self.num_cpus_per_task
-        
+
         self.time_limit = "2h"
 
         self.modules = ["cpe/22.12", "nektar/5.5.0"]
@@ -42,7 +48,6 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
         self.executable = "IncNavierStokesSolver"
 
         self.executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
-    
 
     @sanity_function
     def assert_finished(self):
@@ -53,9 +58,8 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
     def extract_perf(self):
         """Extract performance value to compare with reference value"""
         return sn.extractsingle(
-        r"Total\s+Computation\s+Time\s+=\s+(?P<Comptime>[0-9]+.[0-9]+)s",
-        self.keep_files[0],
-        "Comptime",
-        float,
+            r"Total\s+Computation\s+Time\s+=\s+(?P<Comptime>[0-9]+.[0-9]+)s",
+            self.keep_files[0],
+            "Comptime",
+            float,
         )
-
