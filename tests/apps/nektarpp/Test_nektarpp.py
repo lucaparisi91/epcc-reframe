@@ -45,8 +45,6 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
 
     tags = {"compile"}
 
-
-    #@require_deps
     @run_before('compile')
     def prepare_build(self):
         NEKTAR_VERSION="5.5.0"
@@ -72,7 +70,7 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     def validate_compile(self):
         # If compilation fails, the test would fail in any case, so nothing to
         # further validate here.
-        return True
+        return sn.path_isfile("nektar-v5.5.0/build/nektar/bin/IncNavierStokesSolver") 
 
 
 
@@ -105,13 +103,6 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
     @run_before('run')
     def prepare_run(self):
 
-        #num_nodes = 1
-        #num_tasks_per_node = 32
-        #num_cpus_per_task = 1
-        #num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
-        
-        #time_limit = "2h"
-
         modules = ["cpe/22.12"]
 
         env_vars = {"CRAY_ADD_RPATH": "yes"}
@@ -121,14 +112,11 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
             self.compile_nektarpp.build_prefix,
             'build', 'nektar', 'bin/IncNavierStokesSolver'
         )
-
-        #self.executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
-    
-
+  
     @sanity_function
     def assert_finished(self):
         """Sanity check that simulation finished successfully"""
-        return sn.assert_found("", self.stdout)
+        return sn.assert_found(r"Total\s+Computation\s+Time\s+=\s+", self.keep_files[0], msg="Test_Nektarplusplus: Completion message not found")
 
     @performance_function("seconds", perf_key="Computationtime")
     def extract_perf(self):
