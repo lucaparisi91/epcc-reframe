@@ -30,19 +30,20 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
         },
     }
 
+    self.num_nodes = 1
+    num_tasks_per_node = 1
+    num_cpus_per_task = 1
+    num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
+
+    time_limit = "2h"
+
+    modules = ["cpe/22.12", "nektar/5.5.0"]
+
+    env_vars = {"CRAY_ADD_RPATH": "yes"}
+
     @run_before("run")
     def prepare_run(self):
         """Setup test execution"""
-        self.num_nodes = 1
-        self.num_tasks_per_node = 1
-        self.num_cpus_per_task = 1
-        self.num_tasks = self.num_nodes * self.num_tasks_per_node * self.num_cpus_per_task
-
-        self.time_limit = "2h"
-
-        self.modules = ["cpe/22.12", "nektar/5.5.0"]
-
-        self.env_vars = {"CRAY_ADD_RPATH": "yes"}
 
         self.executable = "IncNavierStokesSolver"
 
@@ -51,7 +52,11 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
     @sanity_function
     def assert_finished(self):
         """Sanity check that simulation finished successfully"""
-        return sn.assert_found("", self.stdout)
+        return sn.assert_found(
+            r"Total\s+Computation\s+Time\s+=\s+",
+            self.keep_files[0],
+            msg="test_module_nektarplusplus: Completion message not found",
+        )
 
     @performance_function("seconds", perf_key="Computationtime")
     def extract_perf(self):
