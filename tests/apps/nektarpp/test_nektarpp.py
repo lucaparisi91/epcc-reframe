@@ -47,6 +47,8 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
 
     tags = {"compile"}
 
+    env_vars = {"CRAY_ADD_RPATH": "yes"}
+
     @run_before("compile")
     def prepare_build(self):
         """Prepare environment for build"""
@@ -57,7 +59,6 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
         self.build_prefix = f"{nektar_name}"
 
         fullpath = os.path.join(self.fetch_nektarpp.stagedir, tarball)
-        env_vars = {"CRAY_ADD_RPATH": "yes"}
 
         self.prebuild_cmds = [
             f"cp {fullpath} {self.stagedir}",
@@ -87,6 +88,10 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
 
     compile_nektarpp = fixture(CompileNektarplusplus, scope="environment")
 
+    modules = ["cpe/22.12"]
+
+    env_vars = {"CRAY_ADD_RPATH": "yes"}
+
     num_nodes = 1
     num_tasks_per_node = 1
     num_cpus_per_task = 1
@@ -102,10 +107,7 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
 
     @run_before("run")
     def prepare_run(self):
-
-        modules = ["cpe/22.12"]
-
-        env_vars = {"CRAY_ADD_RPATH": "yes"}
+        """set up job execution"""
 
         self.executable = os.path.join(
             self.compile_nektarpp.stagedir,
