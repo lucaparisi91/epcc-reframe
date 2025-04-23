@@ -30,7 +30,7 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
         },
     }
 
-    self.num_nodes = 1
+    num_nodes = 1
     num_tasks_per_node = 1
     num_cpus_per_task = 1
     num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
