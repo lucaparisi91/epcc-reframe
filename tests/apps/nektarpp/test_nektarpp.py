@@ -10,11 +10,11 @@
 import os
 import reframe as rfm
 import reframe.utility.sanity as sn
-from reframe.utility import udeps
 
 
 class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
     """Test access to nektarplusplus source code"""
+
     descr = "Fetch Nektarplusplus"
     nektar_version = "5.5.0"
     nektar_label = "nektar"
@@ -37,6 +37,7 @@ class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
 
 class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     """Test compilation of nektarplusplus"""
+
     descr = "Build Nektarplusplus"
     build_system = "Make"
     fetch_nektarpp = fixture(FetchNektarplusplus, scope="environment")
@@ -51,7 +52,6 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
         """Prepare environment for build"""
         nektar_version = "5.5.0"
         nektar_label = "nektar"
-        nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
         nektar_name = f"{nektar_label}-v{nektar_version}"
         tarball = f"{nektar_name}"
         self.build_prefix = f"{nektar_name}"
