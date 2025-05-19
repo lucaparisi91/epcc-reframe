@@ -25,7 +25,6 @@ class LAMMPSBaseEthanol(LAMMPSBase):
         value={
             "archer2:compute": 128,
             "archer2-tds:compute": 128,
-            "cirrus:compute": 36,
             "cirrus:compute-gpu": 40,
         },
     )
@@ -33,7 +32,6 @@ class LAMMPSBaseEthanol(LAMMPSBase):
     ethanol_energy_reference = 537394.35
 
     reference = {
-        "cirrus:compute": {"energy": (ethanol_energy_reference, -0.01, 0.01, "kJ/mol")},
         "cirrus:compute-gpu": {"energy": (ethanol_energy_reference, -0.01, 0.01, "kJ/mol")},
         "archer2:compute": {"energy": (ethanol_energy_reference, -0.01, 0.01, "kJ/mol")},
         "archer2-tds:compute": {"energy": (ethanol_energy_reference, -0.01, 0.01, "kJ/mol")},
@@ -55,21 +53,18 @@ class LAMMPSBaseEthanol(LAMMPSBase):
 class LAMMPSEthanolCPU(LAMMPSBaseEthanol):
     """ReFrame LAMMPS Ethanol test for performance checks"""
 
-    valid_systems = ["archer2:compute", "cirrus:compute"]
+    valid_systems = ["archer2:compute"]
     descr = LAMMPSBaseEthanol.descr + " -- CPU"
     stream_binary = fixture(BuildLAMMPS, scope="environment")
 
     reference["archer2:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
     reference["archer2-tds:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
-    reference["cirrus:compute"]["performance"] = (4.8, -0.05, None, "ns/day")
 
     @run_after("init")
     def setup_nnodes(self):
         """sets up number of tasks per node"""
         if self.current_system.name in ["archer2"]:
             self.num_tasks_per_node = 128
-        elif self.current_system.name in ["cirrus"]:
-            self.num_tasks_per_node = 36
 
     @run_after("setup")
     def set_executable(self):
