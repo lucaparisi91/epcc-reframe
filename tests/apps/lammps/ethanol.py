@@ -5,7 +5,7 @@ import os
 import reframe as rfm
 import reframe.utility.sanity as sn
 
-from lammps_base import LAMMPSBase, BuildLAMMPS
+from lammps_base import BuildLAMMPS, LAMMPSBase
 
 
 class LAMMPSBaseEthanol(LAMMPSBase):
@@ -75,7 +75,6 @@ class LAMMPSEthanolCPU(LAMMPSBaseEthanol):
     def set_executable(self):
         """sets up executable"""
         self.executable = os.path.join(self.stream_binary.build_system.builddir, "lmp")
-
 
     @run_before("run")
     def setup_resources(self):
