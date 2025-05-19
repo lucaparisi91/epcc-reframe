@@ -1,9 +1,11 @@
 """ReFrame script for LAMMPS ethanol test"""
 
+import os
+
 import reframe as rfm
 import reframe.utility.sanity as sn
 
-from lammps_base import LAMMPSBase
+from lammps_base import LAMMPSBase, BuildLAMMPS
 
 
 class LAMMPSBaseEthanol(LAMMPSBase):
@@ -55,9 +57,10 @@ class LAMMPSEthanolCPU(LAMMPSBaseEthanol):
 
     valid_systems = ["archer2:compute", "cirrus:compute"]
     descr = LAMMPSBaseEthanol.descr + " -- CPU"
+    stream_binary = fixture(BuildLAMMPS, scope="environment")
 
-    reference["archer2:compute"]["performance"] = (16.800, -0.05, None, "ns/day")
-    reference["archer2-tds:compute"]["performance"] = (16.800, -0.05, None, "ns/day")
+    reference["archer2:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
+    reference["archer2-tds:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
     reference["cirrus:compute"]["performance"] = (4.8, -0.05, None, "ns/day")
 
     @run_after("init")
@@ -67,6 +70,12 @@ class LAMMPSEthanolCPU(LAMMPSBaseEthanol):
             self.num_tasks_per_node = 128
         elif self.current_system.name in ["cirrus"]:
             self.num_tasks_per_node = 36
+
+    @run_after("setup")
+    def set_executable(self):
+        """sets up executable"""
+        self.executable = os.path.join(self.stream_binary.build_system.builddir, "lmp")
+
 
     @run_before("run")
     def setup_resources(self):

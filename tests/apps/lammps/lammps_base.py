@@ -13,6 +13,7 @@ class BuildLAMMPS(rfm.CompileOnlyRegressionTest):
     modules = ["cpe", "cray-fftw", "cmake", "eigen"]
     sourcesdir = "https://github.com/lammps/lammps.git"
     sourcepath = "src"
+    prebuild_cmds = ["git checkout stable_29Aug2024_update2"]
     local = True
     build_locally = False
 
@@ -72,4 +73,5 @@ class LAMMPSBase(rfm.RunOnlyRegressionTest):
             self.keep_files[0],
             "perf",
             float,
+            -1,
         )
