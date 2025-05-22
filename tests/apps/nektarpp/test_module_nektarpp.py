@@ -11,35 +11,22 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-@rfm.simple_test
-class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
-    """Nektarplusplus Test"""
+class TestModuleNektarplusplusBase(rfm.RunOnlyRegressionTest):
+    """Nektarplusplus Test Base"""
 
-    descr = "Test Nektarplusplus"
+    descr = "Test Nektarplusplus Base"
 
     valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-cray"]
 
     tags = {"performance", "applications"}
 
-    keep_files = ["rfm_job.out"]
-
-    reference = {
-        "archer2:compute": {
-            "Computationtime": (953.0, -0.1, 0.1, "seconds"),
-        },
-    }
-
-    num_nodes = 1
-    num_tasks_per_node = 1
-    num_cpus_per_task = 1
-    num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
-
-    time_limit = "2h"
-
     modules = ["cpe/22.12", "nektar/5.5.0"]
 
     env_vars = {"CRAY_ADD_RPATH": "yes"}
+
+    keep_files = ["rfm_job.out"]
+
 
     @run_before("run")
     def prepare_run(self):
@@ -47,7 +34,6 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
 
         self.executable = "IncNavierStokesSolver"
 
-        self.executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
 
     @sanity_function
     def assert_finished(self):
@@ -67,3 +53,57 @@ class TestModuleNektarpluslus(rfm.RunOnlyRegressionTest):
             "Comptime",
             float,
         )
+
+
+@rfm.simple_test
+class TestModuleNektarplusplusSerial(TestModuleNektarplusplusBase):
+    """Module Nektarplusplus Test Serial"""
+
+    descr = "Test Module Nektarplusplus Serial"
+
+    num_nodes = 1
+    num_tasks_per_node = 1
+    num_cpus_per_task = 1
+    num_tasks = num_nodes * num_tasks_per_node
+
+    time_limit = "20m"
+
+    executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
+
+    reference = {"archer2:compute": {"Computationtime": (953, -0.1, 0.1, "seconds")}}
+
+
+@rfm.simple_test
+class TestModuleNektarplusplusParallel(TestModuleNektarplusplusBase):
+    """Module Nektarplusplus Test Parallel"""
+
+    descr = "Test Module Nektarplusplus Parallel"
+
+    num_nodes = 1
+    num_tasks_per_node = 32
+    num_cpus_per_task = 4
+    num_tasks = num_nodes * num_tasks_per_node
+
+    time_limit = "1h"
+
+    executable_opts = ["TGV128_mesh.xml TGV128_conditions.xml"]
+
+    reference = {"archer2:compute": {"Computationtime": (1570, -0.1, 0.1, "seconds")}}
+
+
+@rfm.simple_test
+class TestModuleNektarplusplusMultiNode(TestModuleNektarplusplusBase):
+    """Module Nektarplusplus Test Multi Node"""
+
+    descr = "Test Module Nektarplusplus Multi Node"
+
+    num_nodes = 1
+    num_tasks_per_node = 32
+    num_cpus_per_task = 4
+    num_tasks = num_nodes * num_tasks_per_node
+
+    time_limit = "1h"
+
+    executable_opts = ["TGV128_mesh.xml TGV128_conditions.xml"]
+
+    reference = {"archer2:compute": {"Computationtime": (1570, -0.1, 0.1, "seconds")}}
