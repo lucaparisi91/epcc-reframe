@@ -12,19 +12,19 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
-nektar_version = "5.5.0"
-nektar_label = "nektar"
-nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
-nektar_name = f"{nektar_label}-{nektar_version}"
+NEKTAR_VERSION = "5.5.0"
+NEKTAR_LABEL = "nektar"
+NEKTAR_ARCHIVE = f"{NEKTAR_LABEL}-v{NEKTAR_VERSION}.tar.gz"
+NEKTAR_NAME = f"{NEKTAR_LABEL}-{NEKTAR_VERSION}"
 
 
 class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
     """Test access to nektarplusplus source code"""
 
     descr = "Fetch Nektarplusplus"
-    version = variable(str, value=nektar_version)
+    version = variable(str, value=NEKTAR_VERSION)
     executable = "wget"
-    executable_opts = [f"https://gitlab.nektar.info/nektar/nektar/-/archive/v{nektar_version}/{nektar_archive}"]
+    executable_opts = [f"https://gitlab.nektar.info/nektar/nektar/-/archive/v{NEKTAR_VERSION}/{NEKTAR_ARCHIVE}"]
     local = True
     valid_systems = ["archer2:login"]
     valid_prog_environs = ["PrgEnv-cray"]
@@ -56,15 +56,15 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     @run_before("compile")
     def prepare_build(self):
         """Prepare environment for build"""
-        tarball = f"{nektar_archive}"
-        self.build_prefix = f"{nektar_name}"
+        tarball = f"{NEKTAR_ARCHIVE}"
+        self.build_prefix = f"{NEKTAR_NAME}"
 
         fullpath = os.path.join(self.fetch_nektarpp.stagedir, tarball)
 
         self.prebuild_cmds = [
             f"cp {fullpath} {self.stagedir}",
             f"tar xzf {tarball}",
-            f"mv {nektar_label}-v{nektar_version} {self.build_prefix}",
+            f"mv {NEKTAR_LABEL}-v{NEKTAR_VERSION} {self.build_prefix}",
             f"cd {self.build_prefix}",
             f"source ../cmake_nektarpp.sh {nektar_label}",
         ]
@@ -74,7 +74,7 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     @sanity_function
     def validate_compile(self):
         """Validate compilation by checking existance of binary"""
-        return sn.path_isfile(f"{nektar_name}/build/nektar/bin/IncNavierStokesSolver")
+        return sn.path_isfile(f"{NEKTAR_NAME}/build/nektar/bin/IncNavierStokesSolver")
 
 
 class TestNektarplusplusBase(rfm.RunOnlyRegressionTest):
