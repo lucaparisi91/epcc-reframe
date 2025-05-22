@@ -66,7 +66,7 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
             f"tar xzf {tarball}",
             f"mv {NEKTAR_LABEL}-v{NEKTAR_VERSION} {self.build_prefix}",
             f"cd {self.build_prefix}",
-            f"source ../cmake_nektarpp.sh {nektar_label}",
+            f"source ../cmake_nektarpp.sh {NEKTAR_LABEL}",
         ]
         self.build_system.max_concurrency = 8
         self.build_system.options = ["install"]
