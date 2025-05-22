@@ -27,13 +27,11 @@ class TestModuleNektarplusplusBase(rfm.RunOnlyRegressionTest):
 
     keep_files = ["rfm_job.out"]
 
-
     @run_before("run")
     def prepare_run(self):
         """Setup test execution"""
 
         self.executable = "IncNavierStokesSolver"
-
 
     @sanity_function
     def assert_finished(self):

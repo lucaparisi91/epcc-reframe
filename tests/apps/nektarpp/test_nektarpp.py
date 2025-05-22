@@ -13,9 +13,9 @@ import reframe.utility.sanity as sn
 
 
 nektar_version = "5.5.0"
-nektar_label   = "nektar"
+nektar_label = "nektar"
 nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
-nektar_name    = f"{nektar_label}-{nektar_version}"
+nektar_name = f"{nektar_label}-{nektar_version}"
 
 
 class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
@@ -94,7 +94,6 @@ class TestNektarplusplusBase(rfm.RunOnlyRegressionTest):
     env_vars = {"CRAY_ADD_RPATH": "yes"}
 
     keep_files = ["rfm_job.out"]
-
 
     @run_before("run")
     def prepare_run(self):
