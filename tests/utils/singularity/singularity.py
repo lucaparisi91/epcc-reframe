@@ -34,7 +34,7 @@ class OSUContainerTest(rfm.RunOnlyRegressionTest):
 
     descr = "OSU benchmarks in a container"
     osu_container = fixture(PullOSUContainer, scope="session")
-    valid_systems = ["archer2:compute", "cirrus:compute"]
+    valid_systems = ["archer2:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
     num_tasks = 256
     num_tasks_per_node = 128
