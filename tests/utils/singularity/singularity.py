@@ -48,7 +48,6 @@ class OSUContainerTest(rfm.RunOnlyRegressionTest):
 /opt/cray/pe/mpich/8.1.23/gtl/lib:/opt/cray/libfabric/1.12.1.2.2.0.0/lib64:\
 /opt/cray/pe/gcc-libs:/opt/cray/pe/gcc-libs:/opt/cray/pe/lib64:/opt/cray/pe/lib64:\
 /opt/cray/xpmem/default/lib64:/usr/lib64/libibverbs:/usr/lib64:/usr/lib64",
-
         "SINGULARITY_BIND": "/opt/cray,/var/spool,\
 /opt/cray/pe/mpich/8.1.23/ofi/gnu/9.1/lib-abi-mpich:\
 /opt/cray/pe/mpich/8.1.23/gtl/lib,/etc/host.conf,\
@@ -62,7 +61,7 @@ class OSUContainerTest(rfm.RunOnlyRegressionTest):
 /usr/lib64/libibverbs.so.1,/usr/lib64/libkeyutils.so.1,/usr/lib64/liblnetconfig.so.4,\
 /usr/lib64/liblustreapi.so,/usr/lib64/libmunge.so.2,/usr/lib64/libnl-3.so.200,\
 /usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/librdmacm.so.1,\
-/usr/lib64/libyaml-0.so.2"
+/usr/lib64/libyaml-0.so.2",
     }
 
     reference = {
