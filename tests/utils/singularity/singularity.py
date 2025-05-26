@@ -19,7 +19,7 @@ class PullOSUContainer(rfm.RunOnlyRegressionTest):
     valid_prog_environs = ["PrgEnv-gnu"]
     executable = "singularity"
     image_name = "archer2_osu"
-    executable_opts = ["pull", f"docker://ghcr.io/lucaparisi91/{image_name}"]
+    executable_opts = ["pull", f"docker://ghcr.io/epcced/epcc-reframe/{image_name}"]
     local = True
 
     @sanity_function
