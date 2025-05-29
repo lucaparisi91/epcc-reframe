@@ -12,17 +12,19 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 
+NEKTAR_VERSION = "5.5.0"
+NEKTAR_LABEL = "nektar"
+NEKTAR_ARCHIVE = f"{NEKTAR_LABEL}-v{NEKTAR_VERSION}.tar.gz"
+NEKTAR_NAME = f"{NEKTAR_LABEL}-{NEKTAR_VERSION}"
+
+
 class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
     """Test access to nektarplusplus source code"""
 
     descr = "Fetch Nektarplusplus"
-    nektar_version = "5.5.0"
-    nektar_label = "nektar"
-    nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
-    nektar_name = f"{nektar_label}-{nektar_version}"
-    version = variable(str, value=nektar_version)
+    version = variable(str, value=NEKTAR_VERSION)
     executable = "wget"
-    executable_opts = [f"https://gitlab.nektar.info/nektar/nektar/-/archive/v{nektar_version}/{nektar_archive}"]
+    executable_opts = [f"https://gitlab.nektar.info/nektar/nektar/-/archive/v{NEKTAR_VERSION}/{NEKTAR_ARCHIVE}"]
     local = True
     valid_systems = ["archer2:login"]
     valid_prog_environs = ["PrgEnv-cray"]
@@ -54,20 +56,17 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     @run_before("compile")
     def prepare_build(self):
         """Prepare environment for build"""
-        nektar_version = "5.5.0"
-        nektar_label = "nektar"
-        nektar_name = f"{nektar_label}-v{nektar_version}"
-        nektar_archive = f"{nektar_label}-v{nektar_version}.tar.gz"
-        tarball = f"{nektar_archive}"
-        self.build_prefix = f"{nektar_name}"
+        tarball = f"{NEKTAR_ARCHIVE}"
+        self.build_prefix = f"{NEKTAR_NAME}"
 
         fullpath = os.path.join(self.fetch_nektarpp.stagedir, tarball)
 
         self.prebuild_cmds = [
             f"cp {fullpath} {self.stagedir}",
             f"tar xzf {tarball}",
+            f"mv {NEKTAR_LABEL}-v{NEKTAR_VERSION} {self.build_prefix}",
             f"cd {self.build_prefix}",
-            f"source ../cmake_nektarpp.sh {nektar_label}",
+            f"source ../cmake_nektarpp.sh {NEKTAR_LABEL}",
         ]
         self.build_system.max_concurrency = 8
         self.build_system.options = ["install"]
@@ -75,11 +74,10 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     @sanity_function
     def validate_compile(self):
         """Validate compilation by checking existance of binary"""
-        return sn.path_isfile("nektar-v5.5.0/build/nektar/bin/IncNavierStokesSolver")
+        return sn.path_isfile(f"{NEKTAR_NAME}/build/nektar/bin/IncNavierStokesSolver")
 
 
-@rfm.simple_test
-class TestNektarpluslus(rfm.RunOnlyRegressionTest):
+class TestNektarplusplusBase(rfm.RunOnlyRegressionTest):
     """Nektarplusplus Test"""
 
     descr = "Test Nektarplusplus"
@@ -95,18 +93,7 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
 
     env_vars = {"CRAY_ADD_RPATH": "yes"}
 
-    num_nodes = 1
-    num_tasks_per_node = 1
-    num_cpus_per_task = 1
-    num_tasks = num_nodes * num_tasks_per_node * num_cpus_per_task
-
-    time_limit = "20m"
-
     keep_files = ["rfm_job.out"]
-
-    executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
-
-    reference = {"archer2:compute": {"Computationtime": (953, -0.1, 0.1, "seconds")}}
 
     @run_before("run")
     def prepare_run(self):
@@ -138,3 +125,57 @@ class TestNektarpluslus(rfm.RunOnlyRegressionTest):
             "Comptime",
             float,
         )
+
+
+@rfm.simple_test
+class TestNektarpluslusSerial(TestNektarplusplusBase):
+    """Nektarplusplus Test Serial"""
+
+    descr = "Test Nektarplusplus Serial"
+
+    num_nodes = 1
+    num_tasks_per_node = 1
+    num_cpus_per_task = 1
+    num_tasks = num_nodes * num_tasks_per_node
+
+    time_limit = "20m"
+
+    executable_opts = ["TGV64_mesh.xml TGV64_conditions.xml"]
+
+    reference = {"archer2:compute": {"Computationtime": (953, -0.1, 0.1, "seconds")}}
+
+
+@rfm.simple_test
+class TestNektarpluslusParallel(TestNektarplusplusBase):
+    """Nektarplusplus Test Parallel"""
+
+    descr = "Test Nektarplusplus Parallel"
+
+    num_nodes = 1
+    num_tasks_per_node = 32
+    num_cpus_per_task = 4
+    num_tasks = num_nodes * num_tasks_per_node
+
+    time_limit = "1h"
+
+    executable_opts = ["TGV128_mesh.xml TGV128_conditions.xml"]
+
+    reference = {"archer2:compute": {"Computationtime": (1570, -0.1, 0.1, "seconds")}}
+
+
+@rfm.simple_test
+class TestNektarpluslusMultiNode(TestNektarplusplusBase):
+    """Nektarplusplus Test Multi Node"""
+
+    descr = "Test Nektarplusplus Multi Node"
+
+    num_nodes = 4
+    num_tasks_per_node = 8
+    num_cpus_per_task = 16
+    num_tasks = num_nodes * num_tasks_per_node
+
+    time_limit = "1h"
+
+    executable_opts = ["TGV128_mesh.xml TGV128_conditions.xml"]
+
+    reference = {"archer2:compute": {"Computationtime": (1570, -0.1, 0.1, "seconds")}}
