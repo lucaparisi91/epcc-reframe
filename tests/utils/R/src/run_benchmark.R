@@ -1,6 +1,4 @@
-.libPaths("packages")
 
-install.packages("plyr",NCores=8,repos="https://www.stats.bris.ac.uk/R")
 library("plyr")
 
 # declaring first data frame
