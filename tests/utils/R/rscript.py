@@ -56,8 +56,11 @@ class RscriptInstall(RscriptBase):
 class RscriptRun(RscriptBase):
     """Runs a basic R functionality test."""
 
-    descr = "Runs a basic R functionality test. " \
-        "Uses packages installed locally in a previous test."
+    descr = """
+            Runs a basic R functionality test.
+            Uses packages installed locally
+            in a previous test.
+            """
     valid_systems = ["archer2:login", "archer2:compute"]
     executable_opts = ["run_benchmark.R"]
     library = fixture(RscriptInstall, scope="session")
