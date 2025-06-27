@@ -12,8 +12,7 @@ Supported external applications include:
 import reframe as rfm
 import reframe.utility.sanity as sn
 
-@rfm.simple_test
-class PyChemshellFunctionality(rfm.RunOnlyRegressionTest):
+class PyChemshellBase(rfm.RunOnlyRegressionTest):
     """"
     Pychemshell functionality test
     """
@@ -27,11 +26,21 @@ class PyChemshellFunctionality(rfm.RunOnlyRegressionTest):
     modules = ["py-chemshell"]
     local = True
 
+
     @sanity_function
     def assert_finished(self):
         """Sanity check that simulation finished successfully"""
         return sn.assert_found(r"Job\s+\d+\s+has\s+completed", self.stdout)
 
+
+@rfm.simple_test
+class PyChemshellFunctionalityH20HF(PyChemshellBase):
+    """"
+    Pychemshell H2O HF test
+
+    Computes Hartree-Fock energy for a water molecule using NWchem as a backend.
+    """
+    
     @performance_function("s",perf_key="time")
     def extract_time(self):
         """Extract performance value to compare with reference value"""
@@ -41,3 +50,4 @@ class PyChemshellFunctionality(rfm.RunOnlyRegressionTest):
             "time",
             float,
         )
+    
