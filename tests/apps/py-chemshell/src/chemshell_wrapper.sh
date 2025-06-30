@@ -5,8 +5,7 @@ check_job_status() {
     squeue -j "$jobid" -h 2>/dev/null | wc -l
 }
 
-
-chemsh --submit --jobname pycs-nwchem --account=z19 --partition=standard --qos=short --walltime 0:10:0 --nnodes 1 --nprocs 128 h2o_energy_hf.py 2>&1 | tee submit.log
+chemsh --submit --jobname pycs-nwchem $CHEMSHELL_SUBMIT_OPTIONS $TEST_CASE 2>&1 | tee submit.log
 
 jobid=$( tail  -n 10 submit.log | sed -nE "s:.*job ([0-9]+).*:\1:p" )
 
