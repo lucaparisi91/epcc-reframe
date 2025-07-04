@@ -63,6 +63,16 @@ class PyChemshellBase(rfm.RunOnlyRegressionTest):
     partition = "standard" # Is there a way to get the partition from "archer2:compute" instead of hardcoding it ?
     account = "z19" # Hard coded. Could the default be obtained from a configuration file ? Can be overriden from the cli
 
+    @property
+    def name(self):
+        """Returns the chemshell job name based on the test case name"""
+
+        components=self.test_case.split(".")
+        assert len(components)>=2 , "The test case name should end with .py"
+        assert components[-1] == "py" , "The test case name should end with .py"
+        
+        return components[-2]
+
     @run_before('run')
     def set_chemshell_options(self):
         
@@ -80,16 +90,17 @@ class PyChemshellBase(rfm.RunOnlyRegressionTest):
         # overrider default options from corresponding slurm options given from the command line
         chem_shell_options.update(parse_chemshell_options(["qos","partition","account"],self.job.cli_options  ) )
         self.env_vars = {
-            "CHEMSHELL_SUBMIT_OPTIONS" : flatten_options(chem_shell_options),
-            "TEST_CASE" : self.test_case
+            "CHEMSHELL_SUBMIT_OPTIONS" : flatten_options(chem_shell_options), # chemshell submission options
+            "TEST_CASE" : self.test_case, # chemshell python script
+            "NAME" : self.name # used by chemshell to specify the name of the slurm job and output files 
             }
 
     @performance_function("s",perf_key="time")
     def extract_time(self):
         """Extract performance value to compare with reference value"""
         return sn.extractsingle(
-            r" Elapsed time of procedure chemsh.tasks.sp.run:\s+(?P<time>\d+\.?\d*)\s+sec",
-            "pycs-nwchem.log",
+            r" Elapsed time of procedure chemsh\..*:\s+(?P<time>\d+\.?\d*)\s+sec",
+            f"{self.name}.log",
             "time",
             float,
         )
@@ -100,11 +111,13 @@ class PyChemshellBase(rfm.RunOnlyRegressionTest):
         return sn.assert_found(r"Job\s+\d+\s+has\s+completed", self.stdout)
 
 @rfm.simple_test
-class PyChemshellFunctionalityH20HF(PyChemshellBase):
+class PyChemshellH20HF(PyChemshellBase):
     """"
     Pychemshell H2O HF test
 
     Computes Hartree-Fock energy for a water molecule using NWchem as a backend. It is mainly a functionality test, as the test is too small to be significant for measuring performance.
+
+    Makes use of the nwchem package.
     
     """
 
@@ -114,6 +127,18 @@ class PyChemshellFunctionalityH20HF(PyChemshellBase):
     num_tasks = 128
     walltime = "0:10:0"
     
-   
+@rfm.simple_test
+class PyChemshellButanolOpt(PyChemshellBase):
+    """"
+    Pychemshell Butanol test
 
-        
+    Makes use of the gulp package. This is mainly a functionality test, 
+    as the test is too quick to judge performance.
+
+    """
+
+    test_case = "butanol_opt.py"
+    
+    n_nodes = 1
+    num_tasks = 128
+    walltime = "0:10:0"
