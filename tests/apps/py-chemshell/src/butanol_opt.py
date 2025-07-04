@@ -1,4 +1,5 @@
 # flake8: noqa
+# pylint: disable-all
 # Unprotonated n-butanol
 # using amber ff and scale { 0.5 0.5 }
 #
