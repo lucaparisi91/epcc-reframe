@@ -1,6 +1,7 @@
 # flake8: noqa
 # pylint: disable=wildcard-import, method-hidden
 # pylint: disable-all
+# fmt: off
 # NWChem HF single point energy
 
 from chemsh       import *
