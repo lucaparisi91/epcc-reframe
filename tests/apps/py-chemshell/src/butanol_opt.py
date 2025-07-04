@@ -1,3 +1,4 @@
+# flake8: noqa
 # Unprotonated n-butanol
 # using amber ff and scale { 0.5 0.5 }
 #

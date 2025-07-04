@@ -1,3 +1,4 @@
+# flake8: noqa
 # NWChem HF single point energy
 
 from chemsh       import *
