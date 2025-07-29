@@ -8,13 +8,13 @@ metals_method     : dm
 mixing_scheme     : pulay
 finite_basis_corr : 0
 smearing_width    : 0.1 eV
+max_scf_cycles    : 40
 nup               : 648
 ndown             : 648
 nextra_bands      : 120
 rand_seed         : 1
 fix_occupancy     : f
 spin_fix          : -1
-write_none        : true
 
 ! Select optimisation choices for max. speed
 num_dump_cycles   : 0
@@ -22,7 +22,3 @@ opt_strategy_bias : +3
 page_wvfns        : 0
 
 popn_calculate    : false
-
-! Uncomment to use SMP optimisations in FFT
-num_proc_in_smp   : 4
-
