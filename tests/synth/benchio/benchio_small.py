@@ -41,7 +41,6 @@ class BenchioSmallTest(rfm.RegressionTest):
     )
 
     executable_opts = ("1260 1260 1260 global mpiio hdf5 fsync").split()
-    num_tasks = 128 * num_nodes
     num_tasks_per_node = 128
     num_cpus_per_task = 1
 
@@ -51,11 +50,12 @@ class BenchioSmallTest(rfm.RegressionTest):
     postrun_cmds = ["source delete_dirs.sh"]
     time_limit = "1h"
     build_system = "CMake"
-    build_system.ftn = "ftn"
     modules = ["cray-hdf5-parallel"]
 
     @run_after("setup")
     def set_references_per_node(self):
+        self.num_tasks = 128 * self.num_nodes
+    
         """set reference values"""
         if self.num_nodes == 1:
             self.reference = {

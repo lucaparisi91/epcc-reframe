@@ -55,6 +55,9 @@ class GromacsCPUCheck(Gromacs1400kAtomsBase):
     num_tasks = 128
     num_cpus_per_task = 1
     env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
+    reference["archer2:compute"] = {}
+    reference["archer2-tds:compute"] = {}
+    reference["cirrus:compute"] = {}
 
     reference["archer2:compute"]["performance"] = (24.0, -0.1, None, "ns/day")
     reference["archer2-tds:compute"]["performance"] = (22.4, -0.1, None, "ns/day")
@@ -86,7 +89,7 @@ class GromacsGPUCheck(Gromacs1400kAtomsBase):
     n_nodes = 1
     num_tasks = None
     num_cpus_per_tasks = None
-
+    reference["cirrus:compute-gpu"] = {}
     reference["cirrus:compute-gpu"]["performance"] = (11.5, -0.05, None, "ns/day")
 
     @run_after("setup")

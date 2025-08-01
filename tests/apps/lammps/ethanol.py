@@ -57,6 +57,9 @@ class LAMMPSEthanolCPU(LAMMPSBaseEthanol):
     descr = LAMMPSBaseEthanol.descr + " -- CPU"
     stream_binary = fixture(BuildLAMMPS, scope="environment")
 
+    reference["archer2-tds:compute"] = {}
+    reference["archer2:compute"] = {}
+    
     reference["archer2:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
     reference["archer2-tds:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
 
@@ -93,7 +96,7 @@ class LAMMPSEthanolGPU(LAMMPSBaseEthanol):
     n_nodes = 1
     num_tasks = None
     num_cpus_per_task = None
-
+    reference["cirrus:compute-gpu"] = {}
     reference["cirrus:compute-gpu"]["performance"] = (9.4, -0.05, None, "ns/day")
 
     @run_after("init")
