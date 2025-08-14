@@ -54,9 +54,10 @@ class BenchioSmallTest(rfm.RegressionTest):
 
     @run_after("setup")
     def set_references_per_node(self):
+        """set reference values"""
+
         self.num_tasks = 128 * self.num_nodes
 
-        """set reference values"""
         if self.num_nodes == 1:
             self.reference = {
                 "archer2:compute": {
