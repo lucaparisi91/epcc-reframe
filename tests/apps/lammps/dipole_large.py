@@ -13,7 +13,7 @@ class LAMMPSDipole(LAMMPSBase):
     modules = ["lammps"]
     descr = "Slingshot reliability test using LAMMPS/Dipole"
     executable_opts = ["-i in_2048.dipole"]
-    tags = {"largescale","applications", "performance"}
+    tags = {"largescale", "applications", "performance"}
     n_nodes = 1024
     num_cpus_per_task = 1
     time_limit = "20m"

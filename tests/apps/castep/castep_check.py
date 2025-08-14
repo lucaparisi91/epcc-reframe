@@ -59,11 +59,11 @@ class CASTEPCPUCheck(CASTEPBaseCheck):
     time_limit = "20m"
     num_cpus_per_task = 1
     env_vars = {"OMP_NUM_THREADS": str(num_cpus_per_task)}
-    reference["archer2:compute"] = { }
+    reference["archer2:compute"] = {}
     reference["archer2:compute"]["calctime"] = (126, -0.1, 0.1, "s")
     reference["archer2:compute"]["runtime"] = (132, -0.1, 0.1, "s")
-    
-    reference["cirrus:compute"] = { }
+
+    reference["cirrus:compute"] = {}
 
     reference["cirrus:compute"]["calctime"] = (325.9, -0.1, 0.1, "s")
     reference["cirrus:compute"]["runtime"] = (328.2, -0.1, 0.1, "s")

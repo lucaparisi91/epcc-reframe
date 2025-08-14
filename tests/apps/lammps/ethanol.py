@@ -59,7 +59,7 @@ class LAMMPSEthanolCPU(LAMMPSBaseEthanol):
 
     reference["archer2-tds:compute"] = {}
     reference["archer2:compute"] = {}
-    
+
     reference["archer2:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
     reference["archer2-tds:compute"]["performance"] = (11.250, -0.05, None, "ns/day")
 
