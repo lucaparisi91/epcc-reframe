@@ -27,7 +27,7 @@ class FetchNektarplusplus(rfm.RunOnlyRegressionTest):
     executable_opts = [f"https://gitlab.nektar.info/nektar/nektar/-/archive/v{NEKTAR_VERSION}/{NEKTAR_ARCHIVE}"]
     local = True
     valid_systems = ["archer2:login"]
-    valid_prog_environs = ["PrgEnv-cray"]
+    valid_prog_environs = ["PrgEnv-gnu"]
 
     tags = {"fetch"}
 
@@ -45,7 +45,7 @@ class CompileNektarplusplus(rfm.CompileOnlyRegressionTest):
     fetch_nektarpp = fixture(FetchNektarplusplus, scope="environment")
 
     valid_systems = ["archer2:login"]
-    valid_prog_environs = ["PrgEnv-cray"]
+    valid_prog_environs = ["PrgEnv-gnu"]
 
     tags = {"compile"}
 
@@ -83,13 +83,13 @@ class TestNektarplusplusBase(rfm.RunOnlyRegressionTest):
     descr = "Test Nektarplusplus"
 
     valid_systems = ["archer2:compute"]
-    valid_prog_environs = ["PrgEnv-cray"]
+    valid_prog_environs = ["PrgEnv-gnu"]
 
     tags = {"performance", "applications"}
 
     compile_nektarpp = fixture(CompileNektarplusplus, scope="environment")
 
-    modules = ["cpe/22.12"]
+    modules = []
 
     env_vars = {"CRAY_ADD_RPATH": "yes"}
 

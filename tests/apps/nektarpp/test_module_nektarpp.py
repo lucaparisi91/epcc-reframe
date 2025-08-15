@@ -17,11 +17,11 @@ class TestModuleNektarplusplusBase(rfm.RunOnlyRegressionTest):
     descr = "Test Nektarplusplus Base"
 
     valid_systems = ["archer2:compute"]
-    valid_prog_environs = ["PrgEnv-cray"]
+    valid_prog_environs = ["PrgEnv-gnu"]
 
     tags = {"performance", "applications"}
 
-    modules = ["cpe/22.12", "nektar/5.5.0"]
+    modules = ["nektar/5.5.0"]
 
     env_vars = {"CRAY_ADD_RPATH": "yes"}
 
