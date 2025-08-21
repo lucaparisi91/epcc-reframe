@@ -25,7 +25,7 @@ site_configuration = {
                     "descr": "Login nodes",
                     "scheduler": "local",
                     "launcher": "local",
-                    "environs": ["Default", "PrgEnv-gnu", "PrgEnv-cray", "PrgEnv-aocc"],
+                    "environs": ["Default", "PrgEnv-gnu", "PrgEnv-cray", "PrgEnv-aocc"]
                 },
                 {
                     "name": "compute",
@@ -38,7 +38,7 @@ site_configuration = {
                         "--partition=standard",
                         "--qos=standard",
                     ],
-                    "environs": ["PrgEnv-gnu", "PrgEnv-cray", "PrgEnv-aocc"],
+                    "environs": ["PrgEnv-gnu", "PrgEnv-cray", "PrgEnv-aocc","spack-cray","spack-gnu","spack-aocc"],
                     "max_jobs": 64,
                     "processor": {
                         "num_cpus": 128,
@@ -107,6 +107,33 @@ site_configuration = {
             "cxx": "CC",
             "ftn": "ftn",
             "target_systems": ["archer2"],
+        },
+        {
+            "name": "spack-cray",
+            "modules": ["cse_env","PrgEnv-cray"],
+            "cc": "cc",
+            "cxx": "CC",
+            "ftn": "ftn",
+            "target_systems": ["archer2"],
+            "prepare_cmds" : ["module use /mnt/lustre/a2fs-nvme/work/z19/z19/lparisi/spack_reframe/spack-epcc/modules"],
+        },
+        {
+            "name": "spack-gnu",
+            "modules": ["cse_env","PrgEnv-gnu"],
+            "cc": "cc",
+            "cxx": "CC",
+            "ftn": "ftn",
+            "target_systems": ["archer2"],
+            "prepare_cmds" : ["module use /mnt/lustre/a2fs-nvme/work/z19/z19/lparisi/spack_reframe/spack-epcc/modules"],
+        },
+        {
+            "name": "spack-aocc",
+            "modules": ["cse_env","PrgEnv-aocc"],
+            "cc": "cc",
+            "cxx": "CC",
+            "ftn": "ftn",
+            "target_systems": ["archer2"],
+            "prepare_cmds" : ["module use /mnt/lustre/a2fs-nvme/work/z19/z19/lparisi/spack_reframe/spack-epcc/modules"],
         },
         {
             "name": "PrgEnv-aocc",
