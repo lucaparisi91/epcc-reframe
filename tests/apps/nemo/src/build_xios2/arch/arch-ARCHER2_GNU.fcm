@@ -1,0 +1,25 @@
+################################################################################
+###################                Projet XIOS               ###################
+################################################################################
+
+%CCOMPILER      CC
+%FCOMPILER      ftn
+%LINKER         ftn  
+
+%BASE_CFLAGS    -w -std=c++11 -D__XIOS_EXCEPTION
+%PROD_CFLAGS    -O3 -DBOOST_DISABLE_ASSERTS
+%DEV_CFLAGS     -g -O2 
+%DEBUG_CFLAGS   -g -O0
+
+%BASE_FFLAGS    -D__NONE__ -cpp -ffree-line-length-none
+%PROD_FFLAGS    -O3
+%DEV_FFLAGS     -g -O2
+%DEBUG_FFLAGS   -g -O0
+
+%BASE_INC       -D__NONE__
+%BASE_LD        -lstdc++
+
+
+%CPP            cpp
+%FPP            cpp -P
+%MAKE           gmake
