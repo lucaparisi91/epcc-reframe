@@ -1,0 +1,7 @@
+nodes: [1, 4, 8, 12 ]
+tasks_per_node: [ 1, 2, 4, 24 , 288 ]
+base_path: ["/work/z19/z19/lparisi/nfs-testing/run/data"]
+#base_path: ["/vast/lparisi/data"]
+api: ["mpi"]
+stripes: [ -1 ]
+field_size_per_process_per_dimension: [ 128 , 512, 2048]
