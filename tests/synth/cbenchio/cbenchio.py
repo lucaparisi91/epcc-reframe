@@ -77,23 +77,18 @@ class Parameterize(meta.RegressionTestMeta):
 class cbenchio(rfm.RunOnlyRegressionTest):
 
     tags = {"performance", "io"}
-
+    
     valid_systems = ["cirrus-ex:compute"]
     valid_prog_environs = ["PrgEnv-gnu"]
     maintainers = ["l.parisi@epcc.ed.ac.uk"]
     config = None
-    # modules = ["cray-mpich/9.0.0"]
-
-    # env_vars = {
-    #     "LD_LIBRARY_PATH":"/opt/cray/pe/mpich/9.0.0/ofi/gnu/11.2/lib:$LD_LIBRARY_PATH"
-    # }
+    modules = ["cbenchio-gcc"]
 
     def __init__(self):
         super().__init__()
     
-    executable = "/work/z19/z19/lparisi/nfs-testing/cbenchio/opt/cbenchio/dev/bin/benchio"
+    executable = "benchio"
     executable_opts = ["config.yaml"]
-
 
     def write_config(self, config):
         """ Write the configuration for cbenchio to a yaml file. """
@@ -259,11 +254,11 @@ class cbenchio_read(cbenchio):
 
     
 def make_read_test(cls):
-        
+
     # check that the class contains write
     if cls.__name__.find("write") == -1:
         raise ValueError("The class passed to make_read_test must contain 'write' in its name")
-    
+
     fixture = rfm.core.builtins.fixture(cls, scope='environment')
     module=fixture.cls.__module__
     return rfm.simple_test(rfm.core.meta.make_test(cls.__name__.replace("write", "read"), (cbenchio_read,), {"operation": "read","write_test": fixture,}, module=module) )

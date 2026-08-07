@@ -1,6 +1,0 @@
-nodes: [ 1,2,4,8,16 ]
-tasks_per_node: [ 1, 24, 288 ]
-base_path: ["/vast/lparisi/data"]
-api: ["posix"]
-chunk_size: [32, 256, 1024, 4096, 4194304, 16777216,33554432]
-field_size_per_process_per_dimension: [  536870912 ]
