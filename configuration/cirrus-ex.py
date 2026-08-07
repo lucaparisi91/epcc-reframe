@@ -50,7 +50,7 @@ site_configuration = {
                         "PrgEnv-aocc",
                         "PrgEnv-intel"
                     ],
-                    "max_jobs": 1,
+                    "max_jobs": 64,
                     "processor": {
                         "num_cpus": 288,
                         "num_cpus_per_socket": 144,
