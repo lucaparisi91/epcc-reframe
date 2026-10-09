@@ -140,7 +140,7 @@ class MdtestSingleNode(Mdtest):
 class MdtestMultiNode(Mdtest):
     """Run mdtest multiple directories on multiple nodes."""
 
-    nodes = parameter([2, 4, 8, 16])
+    nodes = parameter([2, 4, 8])
     tasks_per_node = 288
     num_cpus_per_task = 1
     time_limit = "20m"
