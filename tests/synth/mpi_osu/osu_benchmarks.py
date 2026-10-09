@@ -155,11 +155,13 @@ class OSUAllreduceTest(OSUBenchmarkTestBase):
     descr = "OSU Allreduce test"
     mpi_tasks = parameter(1 << i for i in range(1, 5))
     osu_binaries = fixture(OSUBuild, scope="environment")
-
+    
     @run_after("init")
     def set_num_tasks(self):
         """Sets number of tasks"""
         self.num_tasks = self.mpi_tasks
+        self.num_tasks_per_node = 2
+        self.num_cpus_per_task = 144
 
     @require_deps
     def set_executable(self):
